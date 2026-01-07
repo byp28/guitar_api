@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommandeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -23,6 +25,17 @@ class Commande
     #[ORM\ManyToOne(inversedBy: 'user')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
+
+    /**
+     * @var Collection<int, Product>
+     */
+    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'commandes')]
+    private Collection $id_commande;
+
+    public function __construct()
+    {
+        $this->id_commande = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -61,6 +74,30 @@ class Commande
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Product>
+     */
+    public function getIdCommande(): Collection
+    {
+        return $this->id_commande;
+    }
+
+    public function addIdCommande(Product $idCommande): static
+    {
+        if (!$this->id_commande->contains($idCommande)) {
+            $this->id_commande->add($idCommande);
+        }
+
+        return $this;
+    }
+
+    public function removeIdCommande(Product $idCommande): static
+    {
+        $this->id_commande->removeElement($idCommande);
 
         return $this;
     }

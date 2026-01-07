@@ -24,6 +24,13 @@ class Avis
     #[ORM\Column(type: Types::INTEGER)]
     private ?int $dislikes = null;
 
+    #[ORM\ManyToOne(inversedBy: 'avis')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'avis')]
+    private ?Product $product = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +68,30 @@ class Avis
     public function setDislikes(int $dislikes): static
     {
         $this->dislikes = $dislikes;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): static
+    {
+        $this->product = $product;
 
         return $this;
     }
