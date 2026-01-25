@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\SousCategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SousCategorieRepository::class)]
@@ -27,6 +28,9 @@ class SousCategorie
      */
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'sousCategorie')]
     private Collection $products;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $img = null;
 
     public function __construct()
     {
@@ -88,6 +92,18 @@ class SousCategorie
                 $product->setSousCategorie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function setImg(string $img): static
+    {
+        $this->img = $img;
 
         return $this;
     }

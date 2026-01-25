@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
@@ -13,12 +14,15 @@ class User
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["user.index"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 150)]
+    #[Groups(["user.index"])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 100)]
+    #[Groups(["user.index"])]
     private ?string $email = null;
 
     #[ORM\Column(length: 100)]
@@ -39,6 +43,10 @@ class User
      */
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user')]
     private Collection $avis;
+
+    #[ORM\Column(length: 10)]
+    #[Groups(["user.index"])]
+    private ?string $type = null;
 
     public function __construct()
     {
@@ -155,6 +163,18 @@ class User
                 $avi->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): static
+    {
+        $this->type = $type;
 
         return $this;
     }

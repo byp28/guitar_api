@@ -55,6 +55,9 @@ class Product
     #[ORM\ManyToMany(targetEntity: Commande::class, mappedBy: 'id_commande')]
     private Collection $commandes;
 
+    #[ORM\Column(type: Types::INTEGER, nullable: true)]
+    private ?int $evaluation = null;
+
     public function __construct()
     {
         $this->avis = new ArrayCollection();
@@ -215,6 +218,18 @@ class Product
         if ($this->commandes->removeElement($commande)) {
             $commande->removeIdCommande($this);
         }
+
+        return $this;
+    }
+
+    public function getEvaluation(): ?int
+    {
+        return $this->evaluation;
+    }
+
+    public function setEvaluation(int $evaluation): static
+    {
+        $this->evaluation = $evaluation;
 
         return $this;
     }

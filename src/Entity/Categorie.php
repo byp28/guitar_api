@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
@@ -29,6 +30,9 @@ class Categorie
      */
     #[ORM\OneToMany(targetEntity: SousCategorie::class, mappedBy: 'categorie')]
     private Collection $categories;
+
+    #[ORM\Column(type: Types::TEXT)]
+    private ?string $img = null;
 
     public function __construct()
     {
@@ -109,6 +113,18 @@ class Categorie
                 $category->setCategorie(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getImg(): ?string
+    {
+        return $this->img;
+    }
+
+    public function setImg(string $img): static
+    {
+        $this->img = $img;
 
         return $this;
     }
