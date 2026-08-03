@@ -35,6 +35,12 @@ class Adresse
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'adresses')]
     private Collection $adresse;
 
+    #[ORM\Column(length: 255)]
+    private ?string $complement = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $country = null;
+
     public function __construct()
     {
         $this->adresse = new ArrayCollection();
@@ -119,6 +125,30 @@ class Adresse
                 $adresse->setAdresses(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getComplement(): ?string
+    {
+        return $this->complement;
+    }
+
+    public function setComplement(string $complement): static
+    {
+        $this->complement = $complement;
+
+        return $this;
+    }
+
+    public function getCountry(): ?string
+    {
+        return $this->country;
+    }
+
+    public function setCountry(string $country): static
+    {
+        $this->country = $country;
 
         return $this;
     }

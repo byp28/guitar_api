@@ -58,10 +58,17 @@ class Product
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $evaluation = null;
 
+    /**
+     * @var Collection<int, CommandeProduct>
+     */
+    #[ORM\OneToMany(targetEntity: CommandeProduct::class, mappedBy: 'Product_id')]
+    private Collection $commandeProducts;
+
     public function __construct()
     {
         $this->avis = new ArrayCollection();
         $this->commandes = new ArrayCollection();
+        $this->commandeProducts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,24 +210,6 @@ class Product
         return $this->commandes;
     }
 
-    public function addCommande(Commande $commande): static
-    {
-        if (!$this->commandes->contains($commande)) {
-            $this->commandes->add($commande);
-            $commande->addIdCommande($this);
-        }
-
-        return $this;
-    }
-
-    public function removeCommande(Commande $commande): static
-    {
-        if ($this->commandes->removeElement($commande)) {
-            $commande->removeIdCommande($this);
-        }
-
-        return $this;
-    }
 
     public function getEvaluation(): ?int
     {
@@ -230,6 +219,36 @@ class Product
     public function setEvaluation(int $evaluation): static
     {
         $this->evaluation = $evaluation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, CommandeProduct>
+     */
+    public function getCommandeProducts(): Collection
+    {
+        return $this->commandeProducts;
+    }
+
+    public function addCommandeProduct(CommandeProduct $commandeProduct): static
+    {
+        if (!$this->commandeProducts->contains($commandeProduct)) {
+            $this->commandeProducts->add($commandeProduct);
+            $commandeProduct->setProductId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommandeProduct(CommandeProduct $commandeProduct): static
+    {
+        if ($this->commandeProducts->removeElement($commandeProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($commandeProduct->getProductId() === $this) {
+                $commandeProduct->setProductId(null);
+            }
+        }
 
         return $this;
     }

@@ -6,6 +6,7 @@ use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
@@ -14,9 +15,11 @@ class Categorie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["categorie.index"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["categorie.index","categorie.create","categorie.edit"])]
     private ?string $designation = null;
 
     /**
@@ -32,6 +35,7 @@ class Categorie
     private Collection $categories;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["categorie.index","categorie.create","categorie.edit"])]
     private ?string $img = null;
 
     public function __construct()

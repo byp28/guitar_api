@@ -31,6 +31,17 @@ class SousCategorieRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    public function indexWithCategorie(): array
+       {
+           return $this->createQueryBuilder('s')
+               ->select('s.id','s.designation','s.img','c.designation as categorie')
+               ->leftJoin('s.categorie','c')
+               ->orderBy('s.id', 'ASC')
+               ->getQuery()
+               ->getResult()
+           ;
+       }
+
     //    public function findOneBySomeField($value): ?SousCategorie
     //    {
     //        return $this->createQueryBuilder('s')

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SousCategorieRepository::class)]
 class SousCategorie
@@ -14,13 +15,16 @@ class SousCategorie
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["subcategorie.index"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["subcategorie.index","subcategorie.create"])]
     private ?string $designation = null;
 
     #[ORM\ManyToOne(inversedBy: 'categories')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["subcategorie.index","subcategorie.create"])]
     private ?Categorie $categorie = null;
 
     /**
@@ -30,6 +34,7 @@ class SousCategorie
     private Collection $products;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["subcategorie.index","subcategorie.create"])]
     private ?string $img = null;
 
     public function __construct()

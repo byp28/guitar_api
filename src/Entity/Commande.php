@@ -19,23 +19,30 @@ class Commande
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $date_cmd = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $date_exp = null;
 
-    #[ORM\ManyToOne(inversedBy: 'user')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+
+
+    #[ORM\Column(length: 255)]
+    private ?string $status = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $CommandeNumber = null;
 
     /**
-     * @var Collection<int, Product>
+     * @var Collection<int, CommandeProduct>
      */
-    #[ORM\ManyToMany(targetEntity: Product::class, inversedBy: 'commandes')]
-    private Collection $id_commande;
+    #[ORM\OneToMany(targetEntity: CommandeProduct::class, mappedBy: 'Commande_id')]
+    private Collection $commandeProducts;
+
+    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?user $user = null;
 
     public function __construct()
     {
-        $this->id_commande = new ArrayCollection();
+        $this->commandeProducts = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -54,50 +61,70 @@ class Commande
         return $this;
     }
 
-    public function getDateExp(): ?\DateTime
+
+
+    public function getStatus(): ?string
     {
-        return $this->date_exp;
+        return $this->status;
     }
 
-    public function setDateExp(\DateTime $date_exp): static
+    public function setStatus(string $status): static
     {
-        $this->date_exp = $date_exp;
+        $this->status = $status;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getCommandeNumber(): ?string
     {
-        return $this->user;
+        return $this->CommandeNumber;
     }
 
-    public function setUser(?User $user): static
+    public function setCommandeNumber(string $CommandeNumber): static
     {
-        $this->user = $user;
+        $this->CommandeNumber = $CommandeNumber;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Product>
+     * @return Collection<int, CommandeProduct>
      */
-    public function getIdCommande(): Collection
+    public function getCommandeProducts(): Collection
     {
-        return $this->id_commande;
+        return $this->commandeProducts;
     }
 
-    public function addIdCommande(Product $idCommande): static
+    public function addCommandeProduct(CommandeProduct $commandeProduct): static
     {
-        if (!$this->id_commande->contains($idCommande)) {
-            $this->id_commande->add($idCommande);
+        if (!$this->commandeProducts->contains($commandeProduct)) {
+            $this->commandeProducts->add($commandeProduct);
+            $commandeProduct->setCommandeId($this);
         }
 
         return $this;
     }
 
-    public function removeIdCommande(Product $idCommande): static
+    public function removeCommandeProduct(CommandeProduct $commandeProduct): static
     {
-        $this->id_commande->removeElement($idCommande);
+        if ($this->commandeProducts->removeElement($commandeProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($commandeProduct->getCommandeId() === $this) {
+                $commandeProduct->setCommandeId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?user
+    {
+        return $this->user;
+    }
+
+    public function setUser(?user $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

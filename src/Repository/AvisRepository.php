@@ -40,4 +40,18 @@ class AvisRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findByProduct($value): array
+    {
+        return $this->createQueryBuilder('a')
+        ->select('a.id','a.contenu','a.likes','a.dislikes','u.nom','u.id as userId')
+        ->leftJoin('a.user','u')
+        ->andWhere('a.product = :product')
+        ->setParameter('product', $value)
+        ->orderBy('a.id', 'ASC')
+        ->getQuery()
+        ->getResult();
+           ;
+    }
+
 }
