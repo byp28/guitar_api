@@ -75,4 +75,11 @@ final class AvisController extends AbstractController
         return $this->json($avis, 200);
     }
 
+    #[Route('/api/avis/user/{id}', name: 'avis.user', methods: ["POST"])]
+    public function getAvisByUser(int $id,Request $request, AvisRepository $repository,EntityManagerInterface $em): Response
+    {
+        $avis = $repository->findByUserId($id);
+        return $this->json($avis, 200);
+    }
+
 }

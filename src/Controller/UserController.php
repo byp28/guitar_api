@@ -63,42 +63,59 @@ final class UserController extends AbstractController
         }
 
         $token = $jwtManager->create($user);
+        $adresseId = null;
+        if($user->getAdresses() != null){
+            $adresseId = $user->getAdresses()->getId();
+        }
 
         return $this->json([
             'user' => [
                 "id" => $user->getId(),
+                "addressId"=> $adresseId,
                 "nom"=> $user->getNom(),
                 "email"=> $user->getEmail(),
                 "type"=> $user->getType(),
+                "roles"=> $user->getRoles(),
                 'token' => $token,
             ]
         ]);
     }
 
-    #[Route('/api/user/{id}', name: 'user.show', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
-    public function edit(int $id, Request $request, UserRepository $repository, SerializerInterface $serializer, EntityManagerInterface $em )
+    #[Route('/api/user/{id}', name: 'user.update', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
+    public function edit(User $user, Request $request, EntityManagerInterface $em )
     {
-        $user = $repository->find($id);
-        if($user){
 
-            $serializer->deserialize($request->getContent(), User::class, 'json', [
-                AbstractNormalizer::OBJECT_TO_POPULATE => $user,
-                "groups" => ['user.edit']
-            ]);
-
-            $em->persist($user);
-            $em->flush();
+        $user->setNom($request->getPayload()->get("nom"));
+        $user->setEmail($request->getPayload()->get("email"));
+        $em->persist($user);
+        $em->flush();
             
-            return $this->json([
-                "message" => "user updated",
-                "code"=> 201
-            ], 201);
-        }
-         
         return $this->json([
-            "message" => "user not found",
-            "code"=> 404
-        ], 404);
+            "message" => "user updated",
+            "code"=> 201
+        ], 200);
+        
+    }
+
+    #[Route('/api/user/{id}/password', name: 'user.password', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
+    public function editPassword(User $user, Request $request, EntityManagerInterface $em )
+    {
+        if($user->getPassword() != $request->getPayload()->get("password")){
+            return $this->json([
+                "message" => "mot de passe incorect",
+                "code"=> 404
+            ], 200);
+        }
+
+        $user->setPassword($request->getPayload()->get("newPassword"));
+        $em->persist($user);
+        $em->flush();
+            
+        return $this->json([
+            "message" => "user updated",
+            "code"=> 200
+        ], 200);
+        
     }
 
 
@@ -139,9 +156,15 @@ final class UserController extends AbstractController
                 ], 404);
             }
 
+            $adresseId = null;
+            if($user->getAdresses() != null){
+                $adresseId = $user->getAdresses()->getId();
+            }
+
             return $this->json([
                 'user' => [
                     "id" => $user->getId(),
+                    "addressId"=>$adresseId,
                     "nom"=> $user->getNom(),
                     "email"=> $user->getEmail(),
                     "type"=> $user->getType(),
@@ -205,6 +228,25 @@ final class UserController extends AbstractController
         ], 201);
     }
 
+    #[Route('/api/user/adresse/{id}', name: 'user.adresse.edit', methods: ["POST"])]
+    public function editAdresse(Request $request, Adresse $adresse, EntityManagerInterface $em )
+    {
+        $adresse->setCode($request->getPayload()->get("postal"));
+        $adresse->setNumeros($request->getPayload()->get("number"));
+        $adresse->setRue($request->getPayload()->get("rue"));
+        $adresse->setVille($request->getPayload()->get("ville"));
+        $adresse->setCountry($request->getPayload()->get("country"));
+        $adresse->setComplement($request->getPayload()->get("complement"));
+
+        $em->persist($adresse);
+        $em->flush();
+
+        return $this->json([
+            "message"=> "adresse edited",
+            "code"=> 201,
+        ], 201);
+    }
+
     
     #[Route('/api/user/{id}/adresse', name: 'user.adresse', methods: ["GET"])]
     public function getAdresse(Adresse $adresse)
@@ -213,11 +255,12 @@ final class UserController extends AbstractController
 
         return $this->json([
             "id"=>$adresse->getId(),
+            "number"=>$adresse->getNumeros(),
             "rue"=> $adresse->getRue(),
             "code"=> $adresse->getCode(),
             "ville"=> $adresse->getVille(),
             "country"=> $adresse->getCountry(),
             "complement"=> $adresse->getComplement(),
-        ], 201);
+        ], 200);
     }
 }
