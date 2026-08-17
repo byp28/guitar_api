@@ -25,13 +25,13 @@ class Categorie
     /**
      * @var Collection<int, Product>
      */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'categorie')]
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'categorie',cascade: ['remove'])]
     private Collection $categorie;
 
     /**
      * @var Collection<int, SousCategorie>
      */
-    #[ORM\OneToMany(targetEntity: SousCategorie::class, mappedBy: 'categorie')]
+    #[ORM\OneToMany(targetEntity: SousCategorie::class, mappedBy: 'categorie',cascade: ['remove'])]
     private Collection $categories;
 
     #[ORM\Column(type: Types::TEXT)]

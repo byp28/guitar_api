@@ -46,14 +46,10 @@ class Product
     /**
      * @var Collection<int, Avis>
      */
-    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'product')]
+    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'product', cascade: ['remove'])]
     private Collection $avis;
 
-    /**
-     * @var Collection<int, Commande>
-     */
-    #[ORM\ManyToMany(targetEntity: Commande::class, mappedBy: 'id_commande')]
-    private Collection $commandes;
+  
 
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $evaluation = null;
@@ -61,13 +57,12 @@ class Product
     /**
      * @var Collection<int, CommandeProduct>
      */
-    #[ORM\OneToMany(targetEntity: CommandeProduct::class, mappedBy: 'Product_id')]
+    #[ORM\OneToMany(targetEntity: CommandeProduct::class, mappedBy: 'Product_id', cascade: ['remove'])]
     private Collection $commandeProducts;
 
     public function __construct()
     {
         $this->avis = new ArrayCollection();
-        $this->commandes = new ArrayCollection();
         $this->commandeProducts = new ArrayCollection();
     }
 
@@ -202,13 +197,6 @@ class Product
         return $this;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
-    public function getCommandes(): Collection
-    {
-        return $this->commandes;
-    }
 
 
     public function getEvaluation(): ?int

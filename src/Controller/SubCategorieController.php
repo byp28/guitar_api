@@ -49,16 +49,21 @@ final class SubCategorieController extends AbstractController
     #[Route('/api/subCategorie/{id}', name: 'subcategorie.edit', methods: ["POST"])]
     public function edit(Request $request, SousCategorie $Souscategorie, CategorieRepository $Crepo, EntityManagerInterface $em )
     {
-        if(file_exists($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$Souscategorie->getImg())){
-            unlink($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$Souscategorie->getImg());
+        if($request->files->get("imgFile")){
+            if(file_exists($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$Souscategorie->getImg())){
+                unlink($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$Souscategorie->getImg());
+            }
+
+            $img_file = $request->files->get("imgFile");
+            $fileName = "cat".time().".png";
+            $img_file->move($this->getParameter("kernel.project_dir")."/public/img/categorie",$fileName);
+
+            $Souscategorie->setImg($fileName);
         }
 
-        $img_file = $request->files->get("imgFile");
-        $fileName = "cat".time().".png";
-        $img_file->move($this->getParameter("kernel.project_dir")."/public/img/categorie",$fileName);
         $Souscategorie->setDesignation($request->getPayload()->get("designation"));
         $Souscategorie->setCategorie($em->getRepository(Categorie::class)->find($request->getPayload()->get("id_categorie")));
-        $Souscategorie->setImg($fileName);
+        
 
         $em->persist($Souscategorie);
         $em->flush();
@@ -80,7 +85,7 @@ final class SubCategorieController extends AbstractController
         return $this->json([
             "message"=> "Subcategorie deleted",
             "code"=> 202,
-        ], 201);
+        ], 200);
 
     }
 

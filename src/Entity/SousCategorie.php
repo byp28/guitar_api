@@ -30,7 +30,7 @@ class SousCategorie
     /**
      * @var Collection<int, Product>
      */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'sousCategorie')]
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'sousCategorie',cascade: ['remove'])]
     private Collection $products;
 
     #[ORM\Column(type: Types::TEXT)]

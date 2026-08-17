@@ -60,14 +60,18 @@ final class CategorieController extends AbstractController
     #[Route('/api/categorie/{id}', name: 'categorie.edit', methods: ["POST"])]
     public function edit(Request $request, Categorie $categorie, EntityManagerInterface $em )
     {
-        if(file_exists($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$categorie->getImg())){
-            unlink($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$categorie->getImg());
+        if($request->files->get("imgFile")){
+            if(file_exists($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$categorie->getImg())){
+                unlink($this->getParameter("kernel.project_dir")."\\public\\img\\categorie\\".$categorie->getImg());
+            }
+            $img_file = $request->files->get("imgFile");
+            $fileName = "cat".time().".png";
+            $img_file->move($this->getParameter("kernel.project_dir")."/public/img/categorie",$fileName);
+            $categorie->setImg($fileName);
         }
-        $img_file = $request->files->get("imgFile");
-        $fileName = "cat".time().".png";
-        $img_file->move($this->getParameter("kernel.project_dir")."/public/img/categorie",$fileName);
+        
         $categorie->setDesignation($request->getPayload()->get("designation"));
-        $categorie->setImg($fileName);
+        
 
         $em->persist($categorie);
         $em->flush();
@@ -88,8 +92,8 @@ final class CategorieController extends AbstractController
         $em->flush();
         return $this->json([
             "message"=> "categorie deleted",
-            "code"=> 202,
-        ], 201);
+            "code"=> 200,
+        ], 200);
 
     }
 

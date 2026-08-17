@@ -64,16 +64,19 @@ final class ProductController extends AbstractController
     #[Route('/api/product/{id}', name: 'product.edit', methods: ["POST"])]
     public function edit(Request $request, Product $product, ProductRepository $repo, EntityManagerInterface $em )
     {
-        if(file_exists($this->getParameter("kernel.project_dir")."\\public\\img\\product\\".$product->getImage())){
-            unlink($this->getParameter("kernel.project_dir")."\\public\\img\\product\\".$product->getImage());
+
+
+        if($request->files->get("imgFile")){
+            if(file_exists($this->getParameter("kernel.project_dir")."\\public\\img\\product\\".$product->getImage())){
+                unlink($this->getParameter("kernel.project_dir")."\\public\\img\\product\\".$product->getImage());
+            }
+            $img_file = $request->files->get("imgFile");
+
+            $fileName = "cat".time().".png";
+
+            $img_file->move($this->getParameter("kernel.project_dir")."/public/img/product",$fileName);
+            $product->setImage($fileName);
         }
-
-
-        $img_file = $request->files->get("imgFile");
-
-        $fileName = "cat".time().".png";
-
-        $img_file->move($this->getParameter("kernel.project_dir")."/public/img/product",$fileName);
 
         $product->setNom($request->getPayload()->get("nom"));
         $product->setDescription($request->getPayload()->get("description"));
@@ -81,7 +84,7 @@ final class ProductController extends AbstractController
         $product->setDescriptionTechnique($request->getPayload()->get("description_technique"));
         $product->setCategorie($em->getRepository(Categorie::class)->find($request->getPayload()->get("id_categorie")));
         $product->setSousCategorie($em->getRepository(SousCategorie::class)->find($request->getPayload()->get("id_sous_categorie")));
-        $product->setImage($fileName);
+        
 
 
         $em->persist($product);
@@ -104,8 +107,8 @@ final class ProductController extends AbstractController
         $em->flush();
         return $this->json([
             "message"=> "product deleted",
-            "code"=> 202,
-        ], 201);
+            "code"=> 200,
+        ], 200);
 
     }
 
