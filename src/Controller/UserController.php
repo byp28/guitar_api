@@ -27,6 +27,32 @@ final class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/api/user/{id}/role', name: 'user.role', methods: ["POST"])]
+    public function editUserRole(User $user, Request $request, EntityManagerInterface $em  )
+    {
+        $user->setType($request->getPayload()->get("role"));
+
+        $em->persist($user);
+        $em->flush();
+
+        return $this->json([
+            "message" => "user updated",
+            "code"=> 201
+        ], 200);
+    }
+
+    #[Route('/api/user/{id}/delete', name: 'user.delete', methods: ["POST"])]
+    public function delete(User $user, EntityManagerInterface $em  )
+    {
+        $em->remove($user);
+        $em->flush();
+        
+        return $this->json([
+            "message" => "user deleted",
+            "code"=> 201
+        ], 200);
+    }
+
     #[Route('/api/user/{id}', name: 'user.show', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, int $id, UserRepository $repository )
     {
@@ -44,7 +70,7 @@ final class UserController extends AbstractController
     }
 
     #[Route('/api/auth/login', name: 'auth.login', methods: ['POST'])]
-    public function login(Request $request, UserRepository $repository, SerializerInterface $serializer, JWTTokenManagerInterface $jwtManager, EntityManagerInterface $em )
+    public function login(Request $request, UserRepository $repository, JWTTokenManagerInterface $jwtManager)
     {
         $user = $repository->findOneByEmail($request->getPayload()->get("email"));
 

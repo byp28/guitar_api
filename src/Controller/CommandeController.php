@@ -77,4 +77,29 @@ final class CommandeController extends AbstractController
 
     }
 
+    #[Route('/api/commande/{id}', name: 'commande.edit', methods: ["POST"])]
+    public function editCommande(Request $request, Commande $commande,  EntityManagerInterface $em){
+    
+        $commande->setStatus($request->getPayload()->get("status"));
+
+        $em->persist($commande);
+        $em->flush();
+        return $this->json([
+            "message"=> "commande deleted",
+            "code"=> 200,
+        ], 200);
+    }
+
+    #[Route('/api/commande/{id}/delete', name: 'commande.delete', methods: ["POST"])]
+    public function deleteCommande(Request $request, Commande $commande,  EntityManagerInterface $em){
+
+        $em->remove($commande);
+        $em->flush();
+        return $this->json([
+            "message"=> "commande deleted",
+            "code"=> 200,
+        ], 200);
+
+    }
+
 }

@@ -49,8 +49,6 @@ class Product
     #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'product', cascade: ['remove'])]
     private Collection $avis;
 
-  
-
     #[ORM\Column(type: Types::INTEGER, nullable: true)]
     private ?int $evaluation = null;
 
