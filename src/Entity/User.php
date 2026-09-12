@@ -34,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Length(min : 8, minMessage:"Mot de passe trop court")]
     private ?string $password = null;
 
-    #[ORM\ManyToOne(inversedBy: 'adresse')]
+    #[ORM\ManyToOne(inversedBy: 'adresse',cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: true)]
     private ?Adresse $adresses = null;
 
@@ -47,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Avis>
      */
-    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Avis::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $avis;
 
     #[ORM\Column(length: 10)]
@@ -57,7 +57,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Commande>
      */
-    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', cascade: ['remove'])]
     private Collection $commandes;
 
     public function __construct()

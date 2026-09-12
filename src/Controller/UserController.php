@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Adresse;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,17 +42,8 @@ final class UserController extends AbstractController
         ], 200);
     }
 
-    #[Route('/api/user/{id}/delete', name: 'user.delete', methods: ["POST"])]
-    public function delete(User $user, EntityManagerInterface $em  )
-    {
-        $em->remove($user);
-        $em->flush();
-        
-        return $this->json([
-            "message" => "user deleted",
-            "code"=> 201
-        ], 200);
-    }
+
+
 
     #[Route('/api/user/{id}', name: 'user.show', methods: ['GET'], requirements: ['id' => Requirement::DIGITS])]
     public function show(Request $request, int $id, UserRepository $repository )
@@ -81,7 +73,8 @@ final class UserController extends AbstractController
             ], 404);
         }
          
-        if($user->getPassword() != $request->getPayload()->get("password")){
+        //!password_verify($request->getPayload()->get("password"), $user->getPassword())
+        if(!password_verify($request->getPayload()->get("password"), $user->getPassword())){
             return $this->json([
                 "message" => "user not found",
                 "code"=> 404
@@ -126,14 +119,19 @@ final class UserController extends AbstractController
     #[Route('/api/user/{id}/password', name: 'user.password', methods: ['POST'], requirements: ['id' => Requirement::DIGITS])]
     public function editPassword(User $user, Request $request, EntityManagerInterface $em )
     {
-        if($user->getPassword() != $request->getPayload()->get("password")){
+        if(!password_verify($request->getPayload()->get("password"), $user->getPassword())){
             return $this->json([
                 "message" => "mot de passe incorect",
                 "code"=> 404
             ], 200);
         }
 
-        $user->setPassword($request->getPayload()->get("newPassword"));
+        $value = $request->getPayload()->get("newPassword");
+        $options = [
+        'cost' => 15,
+        ];
+        $user->setPassword(password_hash($value,PASSWORD_BCRYPT,$options));
+
         $em->persist($user);
         $em->flush();
             
@@ -216,7 +214,12 @@ final class UserController extends AbstractController
         $user->setType("Client");
         $user->setNom($request->getPayload()->get("nom"));
         $user->setEmail($request->getPayload()->get("email"));
-        $user->setPassword($request->getPayload()->get("password"));
+
+        $value = $request->getPayload()->get("password");
+        $options = [
+        'cost' => 15,
+        ];
+        $user->setPassword(password_hash($value,PASSWORD_BCRYPT,$options));
 
         //dd($user);
         $em->persist($user);
@@ -287,6 +290,31 @@ final class UserController extends AbstractController
             "ville"=> $adresse->getVille(),
             "country"=> $adresse->getCountry(),
             "complement"=> $adresse->getComplement(),
+        ], 200);
+    }
+
+    #[Route('/api/user/{id}/delete', name: 'user.delete', methods: ["POST"])]
+    public function delete(User $user, EntityManagerInterface $em, CommandeRepository $cmd)
+    {
+
+        $commades = $cmd->findCommandeByUserId($user->getId());
+
+        if($commades){
+            foreach($commades as $command){
+                if($command["id"]){
+                    $em->remove($cmd->find($command["id"]));
+                    $em->flush();
+                }
+            }
+        }
+
+
+        $em->remove($user);
+        $em->flush();
+        
+        return $this->json([
+            "message" => "user deleted",
+            "code"=> 201
         ], 200);
     }
 }

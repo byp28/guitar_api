@@ -19,9 +19,6 @@ class Commande
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $date_cmd = null;
 
-
-
-
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
@@ -31,10 +28,10 @@ class Commande
     /**
      * @var Collection<int, CommandeProduct>
      */
-    #[ORM\OneToMany(targetEntity: CommandeProduct::class, mappedBy: 'Commande_id')]
+    #[ORM\OneToMany(targetEntity: CommandeProduct::class, mappedBy: 'Commande_id', cascade: ['remove'])]
     private Collection $commandeProducts;
 
-    #[ORM\ManyToOne(inversedBy: 'commandes')]
+    #[ORM\ManyToOne(inversedBy: 'commandes', cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?user $user = null;
 

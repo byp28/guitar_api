@@ -58,6 +58,9 @@ class Product
     #[ORM\OneToMany(targetEntity: CommandeProduct::class, mappedBy: 'Product_id', cascade: ['remove'])]
     private Collection $commandeProducts;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $brand = null;
+
     public function __construct()
     {
         $this->avis = new ArrayCollection();
@@ -235,6 +238,18 @@ class Product
                 $commandeProduct->setProductId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBrand(): ?string
+    {
+        return $this->brand;
+    }
+
+    public function setBrand(?string $brand): static
+    {
+        $this->brand = $brand;
 
         return $this;
     }
