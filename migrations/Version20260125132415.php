@@ -20,7 +20,7 @@ final class Version20260125132415 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE adresse (id INT AUTO_INCREMENT NOT NULL, numeros INT NOT NULL, rue VARCHAR(255) NOT NULL, ville VARCHAR(255) NOT NULL, code INT NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
+        //$this->addSql('CREATE TABLE adresse (id INT AUTO_INCREMENT NOT NULL, numeros INT NOT NULL, rue VARCHAR(255) NOT NULL, ville VARCHAR(255) NOT NULL, code INT NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE avis (id INT AUTO_INCREMENT NOT NULL, contenu LONGTEXT NOT NULL, likes INT NOT NULL, dislikes INT NOT NULL, user_id INT NOT NULL, product_id INT DEFAULT NULL, INDEX IDX_8F91ABF0A76ED395 (user_id), INDEX IDX_8F91ABF04584665A (product_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE categorie (id INT AUTO_INCREMENT NOT NULL, designation VARCHAR(255) NOT NULL, img LONGTEXT NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
         $this->addSql('CREATE TABLE commande (id INT AUTO_INCREMENT NOT NULL, date_cmd DATE NOT NULL, date_exp DATE NOT NULL, user_id INT NOT NULL, INDEX IDX_6EEAA67DA76ED395 (user_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci`');
@@ -59,7 +59,7 @@ final class Version20260125132415 extends AbstractMigration
         $this->addSql('DROP TABLE product');
         $this->addSql('DROP TABLE sous_categorie');
         $this->addSql('DROP TABLE user');
-        $this->addSql('DROP TABLE adresse');
+        //$this->addSql('DROP TABLE adresse');
         $this->addSql('DROP TABLE messenger_messages');
     }
 }
