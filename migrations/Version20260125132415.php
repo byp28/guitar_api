@@ -52,14 +52,14 @@ final class Version20260125132415 extends AbstractMigration
         $this->addSql('ALTER TABLE product DROP FOREIGN KEY FK_D34A04AD365BF48');
         $this->addSql('ALTER TABLE sous_categorie DROP FOREIGN KEY FK_52743D7BBCF5E72D');
         $this->addSql('ALTER TABLE user DROP FOREIGN KEY FK_8D93D64985E14726');
-        $this->addSql('DROP TABLE avis');
-        $this->addSql('DROP TABLE categorie');
-        $this->addSql('DROP TABLE commande');
-        $this->addSql('DROP TABLE commande_product');
-        $this->addSql('DROP TABLE product');
-        $this->addSql('DROP TABLE sous_categorie');
-        $this->addSql('DROP TABLE user');
-        //$this->addSql('DROP TABLE adresse');
-        $this->addSql('DROP TABLE messenger_messages');
+        // $this->addSql('DROP TABLE avis');
+        // $this->addSql('DROP TABLE categorie');
+        // $this->addSql('DROP TABLE commande');
+        // $this->addSql('DROP TABLE commande_product');
+        // $this->addSql('DROP TABLE product');
+        // $this->addSql('DROP TABLE sous_categorie');
+        // $this->addSql('DROP TABLE user');
+        // //$this->addSql('DROP TABLE adresse');
+        // $this->addSql('DROP TABLE messenger_messages');
     }
 }
