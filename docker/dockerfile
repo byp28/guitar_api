@@ -16,6 +16,10 @@ COPY ./docker/apache.conf /etc/apache2/sites-available/000-default.conf
 RUN cd /var/www && \
     composer install
 
+RUN mkdir -p /var/www/var/cache /var/www/var/log && \
+    chown -R www-data:www-data /var/www/var && \
+    chmod -R 775 /var/www/var
+
 WORKDIR /var/www/
 
 EXPOSE 80
